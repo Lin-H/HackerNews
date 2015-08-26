@@ -1,0 +1,11 @@
+{
+  "name": "hackernews",
+  "version": "0.0.1",
+  "description": "A web app of HackerNews",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lin-H",
+  "license": "MIT"
+}

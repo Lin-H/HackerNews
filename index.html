@@ -20,7 +20,7 @@
       padding-top: 6em;
     }
     
-    .ui.header.title {
+    #title {
       color: white;
       margin: auto;
     }
@@ -40,14 +40,20 @@
 
 
   <div class="ui left vertical inverted sidebar labeled icon menu">
-    <a class="item">
+    <a class="item" data-id="topstories">
       <i class="home icon"></i> Home
     </a>
-    <a class="item">
-      <i class="block layout icon"></i> Topics
+    <a class="item" data-id="newstories">
+      <i class="block layout icon"></i> New
     </a>
-    <a class="item">
-      <i class="smile icon"></i> Friends
+    <a class="item" data-id="showstories">
+      <i class="world icon"></i> Show
+    </a>
+    <a class="item" data-id="askstories">
+      <i class="help icon"></i> Ask
+    </a>
+    <a class="item" data-id="jobstories">
+      <i class="smile icon"></i> Jobs
     </a>
   </div>
 
@@ -55,7 +61,7 @@
     <div class="ui menu fixed inverted">
       <a class="side-button item" onclick="toggleSidebar()"><i class="sidebar icon"></i></a>
       <div class="ui container">
-        <h3 class="ui header title">HackerNews</h3>
+        <h3 class="ui header" id="title">HackerNews</h3>
       </div>
 
     </div>
@@ -66,70 +72,21 @@
       <i class="spinner huge loading icon"></i>
     </div>
   </div>
-
+  <script type="text/javascript" src="main.js"></script>
   <script type="text/javascript">
-    var topStories = [];
-    //swipe event
-    var pusher = document.getElementsByClassName("pusher")[0];
-    var hammer = new Hammer(pusher);
-    hammer.on("swiperight", function(e){
-      toggleSidebar();
-    });
-    
-    //hackernews api request
-    var hackernews = function(url){
-      var promise = Q.Promise(function(resolve, reject){
-        $.getJSON('https://hacker-news.firebaseio.com/v0/'+url+'.json',function(res){
-          resolve(res);
-        });
-      });
-      return promise;
-    }
-    //add item
-    var addItem = function(item){
-      item.time = jQuery.timeago(item.time*1000);
-      var template = '<div class="item"><div class="content"><a class="header" href="'+item.url
-      +'" target="view_window">'+item.title
-      +'</a><div class="meta"><span> by <a href="#">'+item.by
-      +'</a></span></div><div class="extra"><div class="ui label"><i class="thumbs outline up icon"></i>'+item.score
-      +'</div><div class="ui label"><i class="wait icon"></i>'+item.time
-      +'</div><a class="ui orange label"><i class="comments icon"></i>'+item.descendants
-      +' comments</a></div></div></div>';
-        $(template).appendTo($(".ui.divided.items"));
-    }
-    
-    function toggleSidebar(){
-      $('.ui.sidebar').sidebar('toggle');
-    }
     $('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('setting', 'mobileTransition', 'overlay');
-    
     //main action
     hackernews("topstories")
       .then(function(res){
         topStories = res;
-        for(var i=0;i<8;i++){
+        for(var i=0;i<10;i++){
           hackernews("item/"+topStories.shift()).then(function(res){
             addItem(res);
           });
         }
       }, function(err){console.log(err)});
       $('.huge.loading').hide();
-      
       //listen to scroll event
-      function scrollLoad(options){
-        if(window.innerHeight+document.body.scrollTop+options.heightOffset>=document.body.scrollHeight){
-          window.onscroll=null;
-          $('.huge.loading').show();
-        hackernews("item/"+topStories.shift())
-          .then(function(res){
-            addItem(res);
-            $('.huge.loading').hide();
-            window.onscroll=function(){
-              scrollLoad(options);
-            }
-          });
-        }
-      };
       window.onscroll=function(){
         scrollLoad({"heightOffset":100 });
       }

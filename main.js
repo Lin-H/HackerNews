@@ -7,7 +7,7 @@ hammer.on("swiperight", function (e) {
     toggleSidebar();
 });
 
-$(".sidebar>a.item").click(itemClick);
+$(".sidebar>a.item:lt(5)").click(itemClick);
     
 //hackernews api request
 var hackernews = function (url) {
